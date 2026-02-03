@@ -63,6 +63,8 @@ const { username } = Astro.props;
     errors?: Array<{ message: string }>;
   }
 
+  let totalContributionsCount = 0;
+
   const CONTRIBUTION_COLORS = {
     NONE: 'bg-[#19222F]',
     LOW: 'bg-[#146E5E]',
@@ -178,6 +180,7 @@ const { username } = Astro.props;
       if (!data?.data?.user?.contributionsCollection?.contributionCalendar) return;
 
       const { weeks, totalContributions } = data.data.user.contributionsCollection.contributionCalendar;
+      totalContributionsCount = totalContributions;
       
       if (grid) {
         grid.innerHTML = renderContributions(weeks);
@@ -240,6 +243,7 @@ const { username } = Astro.props;
       isDown = false;
       slider.classList.remove('active');
       currentSquare = null;
+      resetContributionInfo();
     });
 
     slider.addEventListener('mouseup', () => {
@@ -287,6 +291,15 @@ const { username } = Astro.props;
         ? `No contributions on ${dateWithSuffix}`
         : `${formatNumber(count)} contribution${count !== '1' ? 's' : ''} on ${dateWithSuffix}`;
     }
+  }
+
+  function resetContributionInfo() {
+    const contributionInfo = document.querySelector('.contribution-info span');
+    if (!contributionInfo) return;
+    
+    contributionInfo.textContent = totalContributionsCount === 0
+      ? 'No contributions in the last year'
+      : `${totalContributionsCount.toLocaleString()} contributions in the last year`;
   }
 
   function getOrdinalSuffix(day: number): string {
