@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function BentoItemDiscoverMore() {
   return (
-    <a href="https://github.com/amirabaskanov" className="flex h-full items-center justify-between group cursor-pointer">
+    <a href="#projects" className="flex h-full items-center justify-between group cursor-pointer">
       <div className="relative">
         <span className="text-white">Discover more projects</span>
         <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#1EF4AE] transition-all duration-300 group-hover:w-full" />
