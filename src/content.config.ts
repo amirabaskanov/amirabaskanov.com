@@ -25,7 +25,9 @@ const projects = defineCollection({
     year: z.number(),
     description: z.string(),
     heroImage: z.string(),
-    heroImageAlign: z.enum(['center', 'top', 'bottom']).default('center')
+    heroImageAlign: z.enum(['center', 'top', 'bottom']).default('center'),
+    url: z.string().optional(),
+    imageStyle: z.enum(['cover', 'icon']).default('cover')
   })
 });
 
