@@ -5,8 +5,8 @@ import type { Map as LeafletMap } from 'leaflet'
 
 // You can customize these coordinates for your location
 const COORDINATES = {
-  lat: 42.3765,
-  lng: -71.2356,
+  lat: 37.7946,
+  lng: -122.3999,
   zoom: 9
 }
 
