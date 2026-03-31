@@ -7,28 +7,28 @@ import { IconWrapper } from '../icons/IconWrapper';
   <div class="flex animate-marquee items-center gap-8">
     {techStacks.map(({ icon, name }) => (
       <div class="w-[50px] h-[50px] flex items-center justify-center">
-        <IconWrapper icon={icon} className="text-white" />
+        <IconWrapper icon={icon} className="text-[var(--t-icon-color)]" />
       </div>
     ))}
     {techStacks.map(({ icon, name }) => (
       <div class="w-[50px] h-[50px] flex items-center justify-center">
-        <IconWrapper icon={icon} className="text-white" />
+        <IconWrapper icon={icon} className="text-[var(--t-icon-color)]" />
       </div>
     ))}
     {techStacks.map(({ icon, name }) => (
       <div class="w-[50px] h-[50px] flex items-center justify-center">
-        <IconWrapper icon={icon} className="text-white" />
+        <IconWrapper icon={icon} className="text-[var(--t-icon-color)]" />
       </div>
     ))}
     {techStacks.map(({ icon, name }) => (
       <div class="w-[50px] h-[50px] flex items-center justify-center">
-        <IconWrapper icon={icon} className="text-white" />
+        <IconWrapper icon={icon} className="text-[var(--t-icon-color)]" />
       </div>
     ))}
 
   </div>
-  <div class="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#0f1219]"></div>
-  <div class="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-[#0f1219]"></div>
+  <div class="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[var(--t-bg-gradient-fade)]"></div>
+  <div class="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-[var(--t-bg-gradient-fade)]"></div>
 </div>
 
 <style>
@@ -44,4 +44,4 @@ import { IconWrapper } from '../icons/IconWrapper';
   .animate-marquee {
     animation: marquee 16s linear infinite;
   }
-</style> 
+</style>

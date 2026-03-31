@@ -22,11 +22,11 @@ interface TypingDetailProps {
 const TypingDetail = ({ category, icon: Icon, value }: TypingDetailProps) => {
   return (
     <div className="group/tooltip relative">
-      <div className="flex items-center gap-1 tracking-wider text-slate-200">
-        <Icon className="size-4 text-slate-500 group-hover:text-slate-300" />
+      <div className="flex items-center gap-1 tracking-wider text-[var(--t-text-heading)]">
+        <Icon className="size-4 text-[var(--t-text-muted)] group-hover:text-[var(--t-text-body)]" />
         <p>{value}</p>
       </div>
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#090D13] border border-[#2A3441] rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity text-xs text-white whitespace-nowrap z-10">
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 px-2 py-1 bg-[var(--t-bg-elevated)] border border-[var(--t-border)] rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity text-xs text-[var(--t-text-primary)] whitespace-nowrap z-10">
         {category}
       </div>
     </div>
@@ -42,7 +42,7 @@ export default function BentoItemTypingSpeedContent({ data }: Props) {
     <div className="relative h-full">
       {/* Background Number */}
       <div className="absolute inset-0 flex items-start justify-center -mt-11">
-        <p className="font-display text-[clamp(120px,15vw,180px)] font-bold text-transparent bg-gradient-to-b from-[#2A3441]/60 via-[#1E293B]/40 to-transparent bg-clip-text leading-none">
+        <p className="font-display text-[clamp(120px,15vw,180px)] font-bold text-transparent bg-gradient-to-b from-[var(--t-border)]/60 via-[var(--t-text-faint)]/40 to-transparent bg-clip-text leading-none">
           {data.wpm}
         </p>
       </div>
@@ -70,4 +70,4 @@ export default function BentoItemTypingSpeedContent({ data }: Props) {
       </a>
     </div>
   )
-} 
+}

@@ -17,7 +17,6 @@ export function BentoItemNowPlaying() {
 
   const fetchNowPlaying = useCallback(async (force = false) => {
     const now = Date.now();
-    // Increase throttle time to 30 seconds
     if (!force && now - lastFetchTime < 30000) {
       return;
     }
@@ -30,14 +29,14 @@ export function BentoItemNowPlaying() {
           'Pragma': 'no-cache'
         }
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.details || `HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      
+
       if (data && data.title) {
         setSpotifyData(data);
         setError(null);
@@ -55,24 +54,20 @@ export function BentoItemNowPlaying() {
   }, [lastFetchTime]);
 
   useEffect(() => {
-    // Initial fetch
     fetchNowPlaying(true);
 
-    // Set up polling - less frequent updates (every 30 seconds)
     const interval = setInterval(() => {
-      fetchNowPlaying(false); // Don't force refresh on interval
+      fetchNowPlaying(false);
     }, 30000);
 
-    // Set up visibility change handler - with throttling
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        fetchNowPlaying(false); // Don't force refresh on visibility change
+        fetchNowPlaying(false);
       }
     };
 
-    // Set up focus handler - with throttling
     const handleFocus = () => {
-      fetchNowPlaying(false); // Don't force refresh on focus
+      fetchNowPlaying(false);
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -88,7 +83,7 @@ export function BentoItemNowPlaying() {
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-sm text-slate-400">Loading...</p>
+        <p className="text-sm text-[var(--t-text-body)]">Loading...</p>
       </div>
     );
   }
@@ -96,7 +91,7 @@ export function BentoItemNowPlaying() {
   if (error || !spotifyData) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-sm text-slate-400">Unable to load track data</p>
+        <p className="text-sm text-[var(--t-text-body)]">Unable to load track data</p>
       </div>
     );
   }
@@ -116,23 +111,23 @@ export function BentoItemNowPlaying() {
 
       <div className="ml-4 flex flex-col justify-center space-y-1.5 overflow-hidden">
         <p className={`text-xs ${
-          spotifyData.isPlaying ? 'animate-[pulse_2s_ease-in-out_infinite] text-white' : 'text-slate-400'
+          spotifyData.isPlaying ? 'animate-[pulse_2s_ease-in-out_infinite] text-[var(--t-text-primary)]' : 'text-[var(--t-text-body)]'
         }`}>
           {spotifyData.isPlaying ? 'Now Playing' : 'Last Played'}
         </p>
-        <p className="truncate text-sm font-medium text-white">
+        <p className="truncate text-sm font-medium text-[var(--t-text-primary)]">
           {spotifyData.title}
         </p>
-        <p className="truncate text-xs text-slate-400">
+        <p className="truncate text-xs text-[var(--t-text-body)]">
           {spotifyData.artist}
         </p>
       </div>
 
       <div className="absolute -right-2 -top-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 z-10 border border-white/10">
-          <SpotifyIcon className="h-4 w-4 text-white group-hover:text-[#1DB954]" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--t-spotify-badge)] z-10 border border-[var(--t-border)]">
+          <SpotifyIcon className="h-4 w-4 text-[var(--t-icon-color)] group-hover:text-[#1DB954]" />
         </div>
       </div>
     </a>
   );
-} 
+}

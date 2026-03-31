@@ -251,6 +251,131 @@
     --color-white: #fff;
   }
 
+/* ─── Theme tokens ─── */
+
+:root {
+  --t-bg-page: #0f1219;
+  --t-bg-card: #141a24;
+  --t-bg-card-hover: #131922;
+  --t-bg-elevated: #090D13;
+  --t-bg-elevated-hover: #1E293B;
+  --t-bg-code: #1a2130;
+  --t-bg-gradient-fade: #0f1219;
+  --t-border: #2A3441;
+  --t-border-hover: #3A4A5A;
+  --t-border-subtle: rgba(42, 52, 65, 0.75);
+  --t-text-primary: #f1f5f9;
+  --t-text-heading: #e2e8f0;
+  --t-text-body: #94a3b8;
+  --t-text-muted: #64748b;
+  --t-text-faint: #475569;
+  --t-accent: #1EF4AE;
+  --t-accent-hover: #10dfa0;
+  --t-accent-muted: #146E5E;
+  --t-glow: rgba(255, 255, 255, 0.06);
+  --t-key-bg: #09090b;
+  --t-key-shadow: #232b34;
+  --t-key-text: #fff;
+  --t-badge-dot: #86efac;
+  --t-badge-dot-ping: rgba(134, 239, 172, 0.65);
+  --t-contrib-none: #19222F;
+  --t-contrib-low: #146E5E;
+  --t-contrib-med: #24B694;
+  --t-contrib-high: #1EF4AE;
+  --t-spotify-badge: #0f172a;
+  --t-featured-card: rgba(55, 65, 81, 0.8);
+  --t-featured-card-hover: rgba(75, 85, 99, 0.8);
+  --t-map-style: streets-v2-dark;
+  --t-separator-from: rgba(39, 39, 42, 0.25);
+  --t-separator-via: rgba(39, 39, 42, 0.75);
+  --t-icon-color: #fff;
+}
+
+html[data-theme="light"] {
+  --t-bg-page: #F7F5F0;
+  --t-bg-card: #FEFDFB;
+  --t-bg-card-hover: #F5F2EC;
+  --t-bg-elevated: #EDE9E1;
+  --t-bg-elevated-hover: #E2DDD3;
+  --t-bg-code: #EDE9E1;
+  --t-bg-gradient-fade: #FEFDFB;
+  --t-border: #DDD8CE;
+  --t-border-hover: #C8C2B6;
+  --t-border-subtle: rgba(221, 216, 206, 0.75);
+  --t-text-primary: #1C1917;
+  --t-text-heading: #292524;
+  --t-text-body: #57534E;
+  --t-text-muted: #78716C;
+  --t-text-faint: #A8A29E;
+  --t-accent: #0D7D64;
+  --t-accent-hover: #059669;
+  --t-accent-muted: #A7F3D0;
+  --t-glow: rgba(0, 0, 0, 0.03);
+  --t-key-bg: #EDE9E1;
+  --t-key-shadow: #C8C2B6;
+  --t-key-text: #1C1917;
+  --t-badge-dot: #059669;
+  --t-badge-dot-ping: rgba(5, 150, 105, 0.5);
+  --t-contrib-none: #EDE9E1;
+  --t-contrib-low: #A7F3D0;
+  --t-contrib-med: #34D399;
+  --t-contrib-high: #059669;
+  --t-spotify-badge: #EDE9E1;
+  --t-featured-card: rgba(221, 216, 206, 0.6);
+  --t-featured-card-hover: rgba(200, 194, 182, 0.7);
+  --t-map-style: streets-v2;
+  --t-separator-from: rgba(221, 216, 206, 0.25);
+  --t-separator-via: rgba(221, 216, 206, 0.75);
+  --t-icon-color: #1C1917;
+}
+
+/* ─── Grain texture ─── */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+html[data-theme="light"] body::before {
+  opacity: 0.04;
+}
+
+/* ─── Scroll reveal ─── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(8px);
+  transition: opacity 0.7s cubic-bezier(0.33, 1, 0.68, 1),
+              transform 0.7s cubic-bezier(0.33, 1, 0.68, 1),
+              filter 0.7s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Stagger children inside a reveal-group */
+.reveal-group > .reveal:nth-child(1) { transition-delay: 0ms; }
+.reveal-group > .reveal:nth-child(2) { transition-delay: 80ms; }
+.reveal-group > .reveal:nth-child(3) { transition-delay: 160ms; }
+.reveal-group > .reveal:nth-child(4) { transition-delay: 240ms; }
+.reveal-group > .reveal:nth-child(5) { transition-delay: 320ms; }
+.reveal-group > .reveal:nth-child(6) { transition-delay: 400ms; }
+.reveal-group > .reveal:nth-child(7) { transition-delay: 480ms; }
+.reveal-group > .reveal:nth-child(8) { transition-delay: 560ms; }
+.reveal-group > .reveal:nth-child(9) { transition-delay: 640ms; }
+.reveal-group > .reveal:nth-child(10) { transition-delay: 720ms; }
+
 html {
   scroll-behavior: smooth;
   scrollbar-width: none;
@@ -259,4 +384,3 @@ html {
 html::-webkit-scrollbar {
   display: none;
 }
-

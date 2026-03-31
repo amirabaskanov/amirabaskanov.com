@@ -34,41 +34,29 @@ const { class: className } = Astro.props;
       data-block="center"
       class="key call-to-action peer"
     >
-      <p class="call-to-action-content text-white">Explore more</p>
+      <p class="call-to-action-content">Explore more</p>
     </a>
   </div>
 </div>
 
 <style>
-  :root {
-    --background-2: #09090b; /* zinc-950 */
-    --background-3: #232b34; /* slate-950 */
-    --contrast: #fff;
-    --size: 5rem; /* keycap size */
-  }
-
   svg {
     width: 2.25rem;
     height: 2.25rem;
   }
 
   @media (max-width: 640px) {
-    :root {
-      --size: 3rem;
-    }
-
     svg {
       width: 1.5rem;
       height: 1.5rem;
     }
   }
 
-  /* adjust value inside rotateY to adjust the direction of each keycap */
   .board {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: calc(var(--size) * 0.02);
+    gap: calc(5rem * 0.02);
   }
 
   .key.call-to-action {
@@ -89,18 +77,18 @@ const { class: className } = Astro.props;
     left: 0;
     top: 50%;
     margin: 10px 15%;
-    background: #fff;
+    background: var(--t-key-text);
     height: 1.5px;
     transition: 0.3s ease-out;
   }
 
   .key.call-to-action:hover .call-to-action-content::after {
     width: 70%;
-    background: #1EF4AE;
+    background: var(--t-accent);
   }
 
   .key.call-to-action:hover .call-to-action-content {
-    color: #1EF4AE;
+    color: var(--t-accent);
   }
 
   .key-position {
@@ -109,34 +97,42 @@ const { class: className } = Astro.props;
 
   .key {
     position: relative;
-    width: var(--size);
-    height: var(--size);
-    font-size: calc(var(--size) / 2);
-    border: 0.1rem solid var(--background-3, #020617);
-    border-radius: calc(var(--size) * 0.2);
-    background: var(--background-2);
-    color: var;
+    width: 5rem;
+    height: 5rem;
+    font-size: 2.5rem;
+    border: 0.1rem solid var(--t-key-shadow);
+    border-radius: 1rem;
+    background: var(--t-key-bg);
+    color: var(--t-key-text);
     box-shadow:
-      0.15rem 0.15rem 0 0 var(--background-3, #020617),
-      0.3rem 0.3rem 0 0 var(--background-3, #020617),
-      0.45rem 0.45rem 0 0 var(--background-3, #020617),
-      0.6rem 0.6rem 0 0 var(--background-3, #020617);
+      0.15rem 0.15rem 0 0 var(--t-key-shadow),
+      0.3rem 0.3rem 0 0 var(--t-key-shadow),
+      0.45rem 0.45rem 0 0 var(--t-key-shadow),
+      0.6rem 0.6rem 0 0 var(--t-key-shadow);
     transition: 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+  }
+
+  @media (max-width: 640px) {
+    .key {
+      width: 3rem;
+      height: 3rem;
+      font-size: 1.5rem;
+      border-radius: 0.6rem;
+    }
   }
 
   .key:hover {
     cursor: pointer;
     transform: translateX(0.3rem) translateY(0.3rem);
     box-shadow:
-      0.15rem 0.15rem 0 0 var(--background-3, #020617),
-      0.3rem 0.3rem 0 0 var(--background-3, #020617),
-      0.45rem 0.45rem 0 0 var(--background-3, #020617),
-      0.5rem 0.5rem 0 0 var(--background-3, #020617);
-    color: #1EF4AE;
+      0.15rem 0.15rem 0 0 var(--t-key-shadow),
+      0.3rem 0.3rem 0 0 var(--t-key-shadow),
+      0.45rem 0.45rem 0 0 var(--t-key-shadow),
+      0.5rem 0.5rem 0 0 var(--t-key-shadow);
+    color: var(--t-accent);
   }
 
   .key:active,
@@ -144,42 +140,33 @@ const { class: className } = Astro.props;
     cursor: grabbing;
     transform: translateX(0.8rem) translateY(0.8rem);
     box-shadow:
-      0.1rem 0.1rem 0 0 var(--background-3, #020617),
-      0.1rem 0.1rem 0 0 var(--background-3, #020617),
-      0.2rem 0.2rem 0 0 var(--background-3, #020617),
-      0.2rem 0.2rem 0 0 var(--background-3, #020617);
+      0.1rem 0.1rem 0 0 var(--t-key-shadow),
+      0.1rem 0.1rem 0 0 var(--t-key-shadow),
+      0.2rem 0.2rem 0 0 var(--t-key-shadow),
+      0.2rem 0.2rem 0 0 var(--t-key-shadow);
     filter: blur(0.02rem);
   }
 
-  /* tooltip source: https://codepen.io/cbracco/pen/nXEQLw */
-  /* Add this attribute to the element that needs a tooltip */
   [data-tooltip] {
     position: relative;
     z-index: 2;
     cursor: pointer;
   }
 
-  /* Hide the tooltip content by default */
   [data-tooltip]:before,
   [data-tooltip]:after {
     visibility: hidden;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-    filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
     opacity: 0;
     pointer-events: none;
   }
 
-  /* Position tooltip above the element */
   [data-tooltip]:before {
     position: absolute;
     bottom: 100%;
     transform: translateX(-50%);
     margin-bottom: 5px;
     padding: 6px 12px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
     border-radius: 3px;
-    background-color: #000;
     background-color: hsl(0, 0%, 20%);
     color: #fff;
     content: attr(data-tooltip);
@@ -190,14 +177,12 @@ const { class: className } = Astro.props;
     z-index: 2;
   }
 
-  /* Triangle hack to make tooltip look like a speech bubble */
   [data-tooltip]:after {
     position: absolute;
     bottom: 100%;
     left: 50%;
     margin-left: -5px;
     width: 0;
-    border-top: 5px solid #000;
     border-top: 5px solid hsl(0, 0%, 20%);
     border-right: 5px solid transparent;
     border-left: 5px solid transparent;
@@ -206,12 +191,9 @@ const { class: className } = Astro.props;
     line-height: 0;
   }
 
-  /* Show tooltip content on hover */
   [data-tooltip]:hover:before,
   [data-tooltip]:hover:after {
     visibility: visible;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-    filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1;
   }
 </style>

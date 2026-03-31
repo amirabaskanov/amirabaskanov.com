@@ -5,9 +5,9 @@ interface BentoBadgeProps {
 
 export default function BentoBadge({ icon: Icon, text }: BentoBadgeProps) {
   return (
-    <div className="flex items-center gap-2 bg-[#0F1219] border border-[#1E293B] rounded-full py-1.5 px-3">
-      <Icon className="size-5 text-white" />
-      <span className="text-sm font-medium text-white">{text}</span>
+    <div className="flex items-center gap-2 bg-[var(--t-bg-elevated)] border border-[var(--t-border)] rounded-full py-1.5 px-3">
+      <Icon className="size-5 text-[var(--t-icon-color)]" />
+      <span className="text-sm font-medium text-[var(--t-text-primary)]">{text}</span>
     </div>
   )
-} 
+}

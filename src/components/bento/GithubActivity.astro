@@ -11,16 +11,22 @@ const { username } = Astro.props;
   <div id="contribution-wrapper" class="w-full overflow-hidden relative">
     <div id="contribution-slider" class="overflow-x-auto hide-scrollbar cursor-grab select-none">
       <div class="inline-flex gap-0 px-[3px]" id="contribution-grid">
-        <!-- Grid will be populated by client-side JavaScript -->
-        <div class="loading-placeholder flex items-center justify-center w-full h-[200px] text-white/50">
-          Loading contributions...
+        <!-- Skeleton placeholder while loading -->
+        <div class="loading-placeholder flex gap-[2px] w-full h-[168px] items-end px-1">
+          {Array.from({ length: 26 }).map(() => (
+            <div class="flex flex-col gap-[2px]">
+              {Array.from({ length: 7 }).map(() => (
+                <div class="w-[18px] h-[18px] rounded-[5px] bg-[var(--t-contrib-none)] animate-pulse" />
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </div>
   </div>
 
-  <div class="text-white text-sm" id="last-contribution-date">
-    Loading last contribution date...
+  <div class="text-[var(--t-text-primary)] text-sm" id="last-contribution-date">
+    <span class="inline-block w-48 h-4 bg-[var(--t-contrib-none)] rounded animate-pulse"></span>
   </div>
 </div>
 
@@ -65,18 +71,11 @@ const { username } = Astro.props;
 
   let totalContributionsCount = 0;
 
-  const CONTRIBUTION_COLORS = {
-    NONE: 'bg-[#19222F]',
-    LOW: 'bg-[#146E5E]',
-    MEDIUM: 'bg-[#24B694]',
-    HIGH: 'bg-[#1EF4AE]'
-  } as const;
-
-  const getContributionColor = (count: number): string => {
-    if (count === 0) return CONTRIBUTION_COLORS.NONE;
-    if (count <= 2) return CONTRIBUTION_COLORS.LOW;
-    if (count <= 5) return CONTRIBUTION_COLORS.MEDIUM;
-    return CONTRIBUTION_COLORS.HIGH;
+  const getContributionLevel = (count: number): string => {
+    if (count === 0) return 'none';
+    if (count <= 2) return 'low';
+    if (count <= 5) return 'med';
+    return 'high';
   };
 
   const formatDate = (dateString: string) => {
@@ -154,7 +153,8 @@ const { username } = Astro.props;
             <div 
               data-date="${day.date}"
               data-count="${day.contributionCount}"
-              class="contribution-square w-[18px] h-[18px] rounded-[5px] transition-colors ${getContributionColor(day.contributionCount)} hover:ring-1 hover:ring-white/20"
+              class="contribution-square w-[18px] h-[18px] rounded-[5px] transition-colors hover:ring-1 hover:ring-white/20"
+              style="background-color: var(--t-contrib-${getContributionLevel(day.contributionCount)})"
             ></div>
           </div>
         `).join('')}
@@ -177,7 +177,14 @@ const { username } = Astro.props;
 
     try {
       const data = await fetchGithubData(username);
-      if (!data?.data?.user?.contributionsCollection?.contributionCalendar) return;
+      if (!data?.data?.user?.contributionsCollection?.contributionCalendar) {
+        if (grid) {
+          grid.innerHTML = '<div class="flex items-center justify-center w-full h-[168px]"><a href="https://github.com/amirabaskanov" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 transition-colors text-sm">See my activity on GitHub →</a></div>';
+        }
+        const lastContribEl = document.getElementById('last-contribution-date');
+        if (lastContribEl) lastContribEl.innerHTML = '';
+        return;
+      }
 
       const { weeks, totalContributions } = data.data.user.contributionsCollection.contributionCalendar;
       totalContributionsCount = totalContributions;
@@ -209,7 +216,11 @@ const { username } = Astro.props;
     } catch (error) {
       console.error('Error initializing GitHub activity:', error);
       if (grid) {
-        grid.innerHTML = '<div class="text-white/50">Failed to load contributions</div>';
+        grid.innerHTML = '<div class="flex items-center justify-center w-full h-[168px]"><a href="https://github.com/amirabaskanov" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 transition-colors text-sm">See my activity on GitHub →</a></div>';
+      }
+      const lastContribEl = document.getElementById('last-contribution-date');
+      if (lastContribEl) {
+        lastContribEl.innerHTML = '';
       }
     }
   }
