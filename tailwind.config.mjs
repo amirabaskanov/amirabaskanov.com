@@ -11,6 +11,7 @@ export default {
         'fade-up-200': 'fade-in-bottom 0.6s cubic-bezier(0.33, 1, 0.68, 1) 200ms both',
         'fade-up-400': 'fade-in-bottom 0.6s cubic-bezier(0.33, 1, 0.68, 1) 400ms both',
         'fade-up-600': 'fade-in-bottom 0.6s cubic-bezier(0.33, 1, 0.68, 1) 600ms both',
+        'fade-up-800': 'fade-in-bottom 0.6s cubic-bezier(0.33, 1, 0.68, 1) 800ms both',
       },
       keyframes: {
         'fade-in-bottom': {

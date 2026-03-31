@@ -12,17 +12,18 @@ const { section, title, description, forHomePage = false, icon: Icon } = Astro.p
 ---
 
 <div class:list={['space-y-4', Astro.props.class]}>
-  <div class="flex items-center gap-2">
-    {Icon && <Icon className="size-5 text-emerald-400" />}
-    <p class="text-sm text-emerald-400">{section}</p>
+  <div class="flex items-center gap-2.5">
+    <div class="w-1.5 h-1.5 rounded-full bg-[var(--t-accent)]"></div>
+    {Icon && <Icon className="size-4 text-[var(--t-accent)]" />}
+    <p class="text-sm font-medium tracking-wide uppercase text-[var(--t-accent)]">{section}</p>
   </div>
   <div class="space-y-2">
     <h2 class:list={[
-      'font-display font-semibold tracking-tight',
-      forHomePage ? 'text-4xl' : 'text-2xl'
+      'font-display font-semibold',
+      forHomePage ? 'text-4xl tracking-[-0.03em]' : 'text-2xl tracking-[-0.02em]'
     ]}>
       {title}
     </h2>
-    {description && <p class="text-zinc-400">{description}</p>}
+    {description && <p class="text-[var(--t-text-body)]">{description}</p>}
   </div>
-</div> 
+</div>
