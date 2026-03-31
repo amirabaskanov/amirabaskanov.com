@@ -1,19 +1,26 @@
 ---
 import { getCollection } from 'astro:content';
-import ProjectCard from './ProjectCard.astro';
+import ProjectShowcase from './ProjectShowcase.astro';
 import ProjectHeader from './ProjectHeader.astro';
 
 const allProjects = await getCollection('projects');
-const sortedProjects = allProjects.sort((a, b) => b.data.year - a.data.year);
+const sortedProjects = allProjects.sort((a, b) => {
+  const orderA = a.data.order ?? 99;
+  const orderB = b.data.order ?? 99;
+  if (orderA !== orderB) return orderA - orderB;
+  return b.data.year - a.data.year;
+});
 ---
 
-<section id='projects' class='my-60 scroll-mt-16'>
+<section id='projects' class='mt-60 mb-40 scroll-mt-16'>
   <div class='w-full max-w-[1120px] mx-auto px-4'>
-    <ProjectHeader forHomePage />
-    <div class='mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-      {sortedProjects.map((project) => (
-        <ProjectCard
-          slug={project.slug}
+    <div class="reveal">
+      <ProjectHeader forHomePage />
+    </div>
+
+    <div class="mt-20">
+      {sortedProjects.map((project, index) => (
+        <ProjectShowcase
           title={project.data.title}
           year={project.data.year}
           description={project.data.description}
@@ -21,6 +28,12 @@ const sortedProjects = allProjects.sort((a, b) => b.data.year - a.data.year);
           heroImageAlign={project.data.heroImageAlign}
           url={project.data.url}
           imageStyle={project.data.imageStyle}
+          label={project.data.label}
+          tags={project.data.tags}
+          stats={project.data.stats}
+          status={project.data.status}
+          index={index}
+          isLast={index === sortedProjects.length - 1}
         />
       ))}
     </div>

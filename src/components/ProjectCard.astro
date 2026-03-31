@@ -9,17 +9,18 @@ interface Props {
   heroImageAlign?: 'center' | 'top' | 'bottom';
   url?: string;
   imageStyle?: 'cover' | 'icon';
+  label?: string;
 }
 
-const { year, title, description, url, heroImage, heroImageAlign = 'center', imageStyle = 'cover' } = Astro.props;
+const { year, title, description, url, heroImage, heroImageAlign = 'center', imageStyle = 'cover', label } = Astro.props;
 const linkTarget = url?.startsWith('http') ? '_blank' : '_self';
 ---
 
-<a href={url || '#'} target={linkTarget} rel={linkTarget === '_blank' ? 'noopener noreferrer' : undefined} class="group block">
-  <div class="rounded-2xl border border-[#2A3441] bg-[#0f1219] overflow-hidden transition-all duration-300 group-hover:border-[#3A4A5A] group-hover:bg-[#131922]">
+<a href={url || '#'} target={linkTarget} rel={linkTarget === '_blank' ? 'noopener noreferrer' : undefined} class="group block reveal">
+  <div class="project-card rounded-2xl border border-[var(--t-border)] bg-[var(--t-bg-card)] overflow-hidden transition-all duration-300">
     <!-- Image area -->
     {imageStyle === 'icon' ? (
-      <div class="flex items-center justify-center h-48 bg-gradient-to-b from-[#1a2130] to-[#0f1219]">
+      <div class="flex items-center justify-center h-48 bg-[var(--t-bg-elevated)]">
         <img
           src={heroImage}
           alt={title}
@@ -44,14 +45,35 @@ const linkTarget = url?.startsWith('http') ? '_blank' : '_self';
     <!-- Content -->
     <div class="p-5 space-y-3">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-semibold text-white">{title}</h3>
-        <span class="text-xs text-zinc-500 tabular-nums">{year}</span>
+        <h3 class="text-lg font-semibold text-[var(--t-text-primary)]">{title}</h3>
+        <span class="text-xs text-[var(--t-text-muted)] tabular-nums">{year}</span>
       </div>
-      <p class="text-sm text-zinc-400 leading-relaxed line-clamp-2">{description}</p>
-      <span class="inline-flex items-center text-sm text-emerald-400 group-hover:text-emerald-300 transition-colors">
-        View project
+      <p class="text-sm text-[var(--t-text-body)] leading-relaxed line-clamp-2">{description}</p>
+      <span class="inline-flex items-center text-sm text-[var(--t-accent)] group-hover:text-[var(--t-accent-hover)] transition-colors">
+        {label || "View project"}
         <ArrowRight className="ml-1 w-3.5 h-3.5 transition-all duration-300 group-hover:ml-2" />
       </span>
     </div>
   </div>
 </a>
+
+<style>
+  .project-card {
+    transition: transform 0.3s cubic-bezier(0.33, 1, 0.68, 1),
+                box-shadow 0.3s cubic-bezier(0.33, 1, 0.68, 1),
+                border-color 0.3s ease;
+  }
+  .group:hover .project-card {
+    border-color: var(--t-border-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.35);
+  }
+  html[data-theme="light"] .group:hover .project-card {
+    box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.1);
+  }
+  .group:active .project-card {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px -8px rgba(0, 0, 0, 0.2);
+    transition-duration: 0.1s;
+  }
+</style>
