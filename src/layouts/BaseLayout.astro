@@ -2,6 +2,7 @@
 // import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer/Footer.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
+import ScrollToTop from "../components/ScrollToTop.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -50,6 +51,7 @@ const {
     <slot />
 
     <ThemeToggle />
+    <ScrollToTop />
     <Footer/>
     <script>
       import "../scripts/menu.js";
