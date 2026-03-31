@@ -1,82 +1,100 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-const pageTitle = "About Me";
+import { ArrowOutward } from "../components/icons/ArrowOutward";
 
-const identity = {
-  firstName: "Amir",
-  country: "United States",
-  occupation: "Software Engineer",
-  hobbies: ["guitar", "volleyball", "manga"],
-};
+const pageTitle = "About | Amir Abaskanov";
 
-const skills = [
-  "Python",
-  "Java",
-  "HTML",
-  "CSS",
-  "JavaScript",
-  "React",
-  "Astro",
-  "Writing Docs",
+const timeline = [
+  { label: "Now", text: "Software Engineer, building AI products in San Francisco" },
+  { label: "2024", text: "Moved solo to SF after graduating" },
+  { label: "2020", text: "Started at Bentley University, Boston" },
+  { label: "Origin", text: "Kyrgyzstan" },
 ];
 
-const happy = true;
-const finished = true;
-const goal = 3;
+const interests = [
+  { emoji: "🧗", label: "Rock climbing" },
+  { emoji: "🎸", label: "Guitar" },
+  { emoji: "🏯", label: "Japanese aesthetics" },
+];
 
-const skillColor = "navy";
-const fontWeight = "bold";
-const textCase = "uppercase";
+const links = [
+  { label: "GitHub", href: "https://github.com/amirabaskanov" },
+  { label: "LinkedIn", href: "https://linkedin.com/in/abaskanov" },
+  { label: "Email", href: "mailto:amirabaskanov@gmail.com" },
+];
 ---
 
-<BaseLayout pageTitle={pageTitle}>
-  <style is:global define:vars={{ skillColor, fontWeight, textCase }}>
-    h1 {
-      color: purple;
-      font-size: 4rem;
-    }
-    .skill {
-      color: var(--skillColor);
-      font-weight: var(--fontWeight);
-      text-transform: var(--textCase);
-    }
-  </style>
-  <h2>... and my new Astro site!</h2>
+<BaseLayout pageTitle={pageTitle} description="About Amir Abaskanov. Software engineer in San Francisco building AI products.">
+  <main class="w-full max-w-[1120px] mx-auto px-4 py-32">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-  <p>
-    I am working through Astro's introductory tutorial. This is the second page
-    on my website, and it's the first one I built myself!
-  </p>
+      <!-- Bio card -->
+      <div class="md:col-span-2 rounded-[32px] border border-[var(--t-border)] bg-[var(--t-bg-card)] p-8 md:p-10">
+        <h1 class="text-2xl font-medium text-[var(--t-text-primary)] tracking-tight mb-6">About me</h1>
+        <div class="space-y-4 text-[var(--t-text-body)] leading-relaxed max-w-[65ch]">
+          <p>
+            I'm Amir, originally from Kyrgyzstan. I moved to the US for university at
+            Bentley in Boston, and after graduating, relocated solo to San Francisco to be
+            closer to the tech I wanted to build.
+          </p>
+          <p>
+            Right now I work on AI-powered products, everything from ML models in production
+            to full-stack features shipped end-to-end. Before that I built things at
+            <a href="https://growthhungry.life" target="_blank" rel="noopener noreferrer" class="text-[var(--t-text-heading)] hover:text-[var(--t-accent)] transition-colors">Growthhungry</a>
+            and interned at
+            <a href="https://kodif.ai" target="_blank" rel="noopener noreferrer" class="text-[var(--t-text-heading)] hover:text-[var(--t-accent)] transition-colors">Kodif</a>.
+          </p>
+          <p>
+            Outside of code I spend time rock climbing, playing guitar, and exploring
+            Japanese aesthetics in design, architecture, and everyday objects. I like things
+            that are simple and well-made.
+          </p>
+        </div>
+      </div>
 
-  <p>
-    This site will update as I complete more of the tutorial, so keep checking
-    back and see how my journey is going!
-  </p>
-  <p>Here are a few facts about me:</p>
-  <ul>
-    <li>My name is {identity.firstName}.</li>
-    <li>I live in {identity.country} and I work as a {identity.occupation}.</li>
-    {
-      identity.hobbies.length >= 2 && (
-        <li>
-          Two of my hobbies are: {identity.hobbies[0]} and {identity.hobbies[1]}
-        </li>
-      )
-    }
-  </ul>
-  <p>My skills are:</p>
-  <ul>
-    {skills.map((skill) => <li class="skill">{skill}</li>)}
-  </ul>
-  {happy && <p>I am happy to be learning Astro!</p>}
+      <!-- Timeline card -->
+      <div class="rounded-[32px] border border-[var(--t-border)] bg-[var(--t-bg-card)] p-8">
+        <h2 class="text-sm font-medium text-[var(--t-text-muted)] mb-6">Timeline</h2>
+        <div class="space-y-5">
+          {timeline.map(({ label, text }) => (
+            <div class="flex gap-4">
+              <span class="text-xs text-[var(--t-accent)] font-medium tabular-nums w-12 shrink-0 pt-0.5">{label}</span>
+              <span class="text-sm text-[var(--t-text-heading)]">{text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-  {finished && <p>I finished this tutorial!</p>}
+      <!-- Interests card -->
+      <div class="rounded-[32px] border border-[var(--t-border)] bg-[var(--t-bg-card)] p-8">
+        <h2 class="text-sm font-medium text-[var(--t-text-muted)] mb-6">Outside of code</h2>
+        <div class="space-y-4">
+          {interests.map(({ emoji, label }) => (
+            <div class="flex items-center gap-3">
+              <span class="text-lg">{emoji}</span>
+              <span class="text-sm text-[var(--t-text-heading)]">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-  {
-    goal === 3 ? (
-      <p>My goal is to finish in 3 days.</p>
-    ) : (
-      <p>My goal is not 3 days.</p>
-    )
-  }
+      <!-- Links card -->
+      <div class="md:col-span-2 rounded-[32px] border border-[var(--t-border)] bg-[var(--t-bg-card)] p-8">
+        <div class="flex flex-wrap gap-6">
+          {links.map(({ label, href }) => (
+            <a
+              href={href}
+              target={href.startsWith("mailto") ? undefined : "_blank"}
+              rel={href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+              class="flex items-center gap-1.5 text-sm text-[var(--t-text-muted)] hover:text-[var(--t-accent)] transition-colors"
+            >
+              {label}
+              <ArrowOutward className="size-3" />
+            </a>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </main>
 </BaseLayout>

@@ -3,41 +3,115 @@ import BaseLayout from "./BaseLayout.astro";
 const { frontmatter } = Astro.props;
 ---
 
-<BaseLayout pageTitle={frontmatter.title}>
-  <p>{frontmatter.pubDate.toLocaleDateString()}</p>
-  <p><em>{frontmatter.description}</em></p>
-  <p>Written by: {frontmatter.author}</p>
-  <img src={frontmatter.image.url} width="300" alt={frontmatter.image.alt} />
+<BaseLayout pageTitle={`${frontmatter.title} | Amir Abaskanov`} description={frontmatter.description}>
+  <main class="w-full max-w-[680px] mx-auto px-4 py-32">
+    <a href="/blog" class="text-sm text-[var(--t-text-muted)] hover:text-[var(--t-text-heading)] transition-colors mb-8 inline-block">&larr; Back to blog</a>
 
-  <div class="tags">
-    {
-      frontmatter.tags.map((tag: string) => (
-        <p class="tag">
-          <a href={`/tags/${tag}`}>{tag}</a>
-        </p>
-      ))
-    }
-  </div>
+    <header class="mb-12">
+      <time class="text-xs text-[var(--t-text-muted)] tabular-nums">
+        {frontmatter.pubDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+      </time>
+      <h1 class="text-3xl font-medium text-[var(--t-text-primary)] tracking-tight mt-2">{frontmatter.title}</h1>
+      {frontmatter.description && (
+        <p class="text-[var(--t-text-body)] mt-3 leading-relaxed">{frontmatter.description}</p>
+      )}
+    </header>
 
-  <slot />
+    <article class="prose-custom">
+      <slot />
+    </article>
+  </main>
 </BaseLayout>
 
-<style>
-  a {
-    color: #00539f;
+<style is:global>
+  .prose-custom {
+    color: var(--t-text-body);
+    line-height: 1.75;
+    max-width: 65ch;
   }
 
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
+  .prose-custom h2 {
+    color: var(--t-text-heading);
+    font-size: 1.375rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
   }
 
-  .tag {
-    margin: 0.25em;
-    border: dotted 1px #a1a1a1;
-    border-radius: 0.5em;
-    padding: 0.5em 1em;
-    font-size: 1.15em;
-    background-color: #f8fcfd;
+  .prose-custom h3 {
+    color: var(--t-text-heading);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose-custom p {
+    margin-bottom: 1.25rem;
+  }
+
+  .prose-custom a {
+    color: var(--t-accent);
+    text-decoration: none;
+  }
+
+  .prose-custom a:hover {
+    text-decoration: underline;
+  }
+
+  .prose-custom code {
+    color: var(--t-text-heading);
+    background: var(--t-bg-code);
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+  }
+
+  .prose-custom pre {
+    background: var(--t-bg-elevated);
+    border: 1px solid var(--t-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .prose-custom pre code {
+    background: none;
+    padding: 0;
+  }
+
+  .prose-custom ul, .prose-custom ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .prose-custom li {
+    margin-bottom: 0.25rem;
+  }
+
+  .prose-custom blockquote {
+    border-left: 2px solid var(--t-border);
+    padding-left: 1rem;
+    color: var(--t-text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .prose-custom strong {
+    color: var(--t-text-heading);
+  }
+
+  .prose-custom img {
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .prose-custom hr {
+    border-color: var(--t-border);
+    margin: 2rem 0;
   }
 </style>
