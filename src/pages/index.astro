@@ -4,15 +4,13 @@ import HeroSection from "../components/HeroSection.astro";
 import BentoSection from "../components/bento/BentoSection.astro";
 import ProjectSection from "../components/ProjectSection.astro";
 import Blog from "./blog.astro";
-const pageTitle = "Home Page";
 ---
 <head>
   <meta charset="utf-8" />
   <script defer src="https://cloud.umami.is/script.js" data-website-id="f1268456-1a63-4072-b4e8-93b4dd501de9"></script>
 </head>
 
-<!-- <BentoSection /> -->
-<BaseLayout pageTitle={pageTitle}>
+<BaseLayout>
   <HeroSection />
   <BentoSection />
   <ProjectSection />
