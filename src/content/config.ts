@@ -6,12 +6,7 @@ const blog = defineCollection({
     title: z.string(),
     pubDate: z.date(),
     description: z.string(),
-    author: z.string(),
-    image: z.object({
-      url: z.string(),
-      alt: z.string()
-    }),
-    tags: z.array(z.string())
+    tags: z.array(z.string()).optional()
   })
 });
 
@@ -24,7 +19,15 @@ const projects = defineCollection({
     heroImage: z.string(),
     heroImageAlign: z.enum(['center', 'top', 'bottom']).default('center'),
     url: z.string().optional(),
-    imageStyle: z.enum(['cover', 'icon']).default('cover')
+    imageStyle: z.enum(['cover', 'icon']).default('cover'),
+    label: z.string().optional(),
+    order: z.number().optional(),
+    tags: z.array(z.string()).optional(),
+    stats: z.array(z.object({
+      value: z.string(),
+      label: z.string()
+    })).optional(),
+    status: z.string().optional()
   })
 });
 

@@ -1,11 +1,11 @@
 ---
 title: "UGCverse"
 year: 2025
-description: "A platform redefining creator-brand collaboration. Creators build portfolios, set pricing, and connect with brands."
+description: "Built the matching engine and creator onboarding flow for a marketplace connecting DTC brands with UGC creators. Portfolio system, pricing tools, and discovery from the ground up."
 heroImage: "/projects/ugcverse-logo.png"
 heroImageAlign: "center"
 url: "https://ugcverse.ai"
 imageStyle: "icon"
+order: 3
+tags: ["Next.js", "TypeScript", "PostgreSQL", "Stripe"]
 ---
-
-UGCverse is a modern platform where creators build public portfolios, set pricing packages, and connect with brands — all in one place.

@@ -1,11 +1,11 @@
 ---
 title: "Valorant Team Optimizer"
 year: 2024
-description: "An unsupervised ML model using Agglomerative Clustering to identify player archetypes and optimize team compositions in Valorant esports."
+description: "Developed an unsupervised ML pipeline that clusters player archetypes from match data and recommends optimal team compositions for maximizing win rates in Valorant esports."
 heroImage: "/projects/valorant-team-optimizer.png"
 heroImageAlign: "center"
 url: "https://github.com/amirabaskanov/valorant-team-optimizer"
 imageStyle: "cover"
+order: 4
+tags: ["Python", "scikit-learn", "Clustering", "Data Science"]
 ---
-
-Clustering Player Archetypes to Optimize Team Composition in Valorant Esports. Uses Agglomerative Clustering to identify player types and recommend optimal team structures for maximizing win rates.
