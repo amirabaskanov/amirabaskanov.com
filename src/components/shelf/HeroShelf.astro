@@ -1,0 +1,431 @@
+---
+---
+
+<div class="hero-shelf-wrapper relative w-full h-full" id="shelf-wrapper">
+  <canvas id="hero-shelf-canvas" class="w-full h-full" style="display:none;"></canvas>
+</div>
+
+<style>
+  .hero-shelf-wrapper {
+    min-height: 600px;
+  }
+
+  .hero-shelf-wrapper {
+    visibility: hidden;
+  }
+
+  .hero-shelf-wrapper.ready {
+    visibility: visible;
+  }
+
+  .guitar-mini-canvas {
+    pointer-events: none;
+    z-index: 10001;
+    background: transparent !important;
+  }
+
+  .guitar-mini-canvas canvas {
+    background: transparent !important;
+  }
+
+  .guitar-mini-canvas.is-dropped {
+    pointer-events: auto;
+    cursor: grab;
+    z-index: 100;
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
+    transition: filter 0.2s ease;
+  }
+
+  .guitar-mini-canvas.is-dropped:hover {
+    filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.3));
+  }
+
+  html[data-theme="light"] .guitar-mini-canvas.is-dropped {
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.1));
+  }
+</style>
+
+<script>
+  async function initShelf() {
+    const THREE = await import('three');
+    const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+    const { DRACOLoader } = await import('three/addons/loaders/DRACOLoader.js');
+
+    const canvas = document.getElementById('hero-shelf-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    function isDark() {
+      return document.documentElement.getAttribute('data-theme') !== 'light';
+    }
+
+    // ── Main renderer ──
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = isDark() ? 1.0 : 1.3;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 0.2, 7);
+    camera.lookAt(0, 0.1, 0);
+
+    // ── Lighting (reusable setup) ──
+    function addLights(targetScene: THREE.Scene) {
+      targetScene.add(new THREE.AmbientLight(0xffffff, isDark() ? 0.8 : 1.0));
+      const kl = new THREE.DirectionalLight(0xffffff, isDark() ? 1.8 : 1.4);
+      kl.position.set(4, 6, 5);
+      targetScene.add(kl);
+      const fl = new THREE.DirectionalLight(isDark() ? 0x6699cc : 0xfff0e0, 0.5);
+      fl.position.set(-4, 3, 2);
+      targetScene.add(fl);
+    }
+
+    addLights(scene);
+
+    // Render one clear frame then show canvas
+    renderer.render(scene, camera);
+    canvas.style.display = '';
+    (canvas.closest('.hero-shelf-wrapper') as HTMLElement)?.classList.add('ready');
+
+    // ── Load guitar ──
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.setDRACOLoader(dracoLoader);
+    let guitarGroup: THREE.Group | null = null;
+    let guitarGltf: any = null;
+
+    // Don't render anything until guitar is ready
+    let guitarReady = false;
+    let fadeIn = 0;
+
+    try {
+      guitarGltf = await new Promise<any>((resolve, reject) => {
+        gltfLoader.load('/models/guitar-draco.glb', resolve, undefined, reject);
+      });
+
+      const model = guitarGltf.scene as THREE.Group;
+
+      // Wait for all textures to decode
+      const textures: THREE.Texture[] = [];
+      model.traverse((child: any) => {
+        if (child.isMesh && child.material) {
+          const mat = child.material;
+          for (const key of ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap', 'aoMap']) {
+            if (mat[key] && mat[key].isTexture) textures.push(mat[key]);
+          }
+        }
+      });
+
+      // Force texture upload by rendering one hidden frame
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      model.position.sub(center);
+
+      const wrap = new THREE.Group();
+      wrap.add(model);
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scl = 5.0 / maxDim;
+      wrap.scale.setScalar(scl);
+      wrap.rotation.set(0, 0, Math.PI / 2);
+      wrap.userData.maxDim = maxDim;
+
+      // Start fully transparent
+      model.traverse((child: any) => {
+        if (child.isMesh && child.material) {
+          child.material.transparent = true;
+          child.material.opacity = 0;
+        }
+      });
+
+      scene.add(wrap);
+      guitarGroup = wrap;
+
+      // Render one frame to upload textures to GPU
+      renderer.render(scene, camera);
+
+      // Delay until hero animations finish (shelf wrapper fades at 800ms + 600ms duration = 1400ms)
+      setTimeout(() => { guitarReady = true; }, 800);
+    } catch (err) {
+      console.warn('Guitar load failed:', err);
+    }
+
+    // ── Resize ──
+    function resize() {
+      const rect = canvas.parentElement!.getBoundingClientRect();
+      renderer.setSize(rect.width, rect.height);
+      camera.aspect = rect.width / rect.height;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // ── Main animation ──
+    let t = 0;
+    let animating = true;
+    let dragging = false;
+
+    const viewObs = new IntersectionObserver(([e]) => { animating = e.isIntersecting; }, { threshold: 0 });
+    viewObs.observe(canvas);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if ((!animating && !dragging) || !guitarGroup) return;
+      t += 0.01;
+
+      // Slow fade in (~2 seconds at 60fps: 0.008 * ~120 frames)
+      if (guitarReady && fadeIn < 1) {
+        fadeIn = Math.min(1, fadeIn + 0.008);
+        const eased = fadeIn * fadeIn * (3 - 2 * fadeIn); // smoothstep easing
+        guitarGroup.traverse((child: any) => {
+          if (child.isMesh && child.material) {
+            child.material.opacity = eased;
+            if (fadeIn >= 1) child.material.transparent = false;
+          }
+        });
+      }
+
+      if (!dragging) {
+        guitarGroup.position.y = Math.sin(t * 1.0) * 0.008;
+        guitarGroup.rotation.y = t * 0.3;
+      }
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ── Create a mini animated canvas with its own scene ──
+    function createMiniRenderer(width: number, height: number): {
+      canvas: HTMLCanvasElement;
+      guitar: THREE.Group | null;
+      destroy: () => void;
+    } {
+      const miniCanvas = document.createElement('canvas');
+      miniCanvas.width = width * Math.min(window.devicePixelRatio, 2);
+      miniCanvas.height = height * Math.min(window.devicePixelRatio, 2);
+      miniCanvas.style.width = `${width}px`;
+      miniCanvas.style.height = `${height}px`;
+
+      const miniRenderer = new THREE.WebGLRenderer({ canvas: miniCanvas, alpha: true, antialias: true });
+      miniRenderer.setSize(width, height);
+      miniRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      miniRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+      miniRenderer.toneMappingExposure = isDark() ? 1.0 : 1.3;
+
+      const miniScene = new THREE.Scene();
+      addLights(miniScene);
+
+      const miniCam = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+      miniCam.position.set(0, 0.2, 7);
+      miniCam.lookAt(0, 0.1, 0);
+
+      // Clone the guitar from the original gltf
+      let miniGuitar: THREE.Group | null = null;
+      if (guitarGltf) {
+        const clonedModel = guitarGltf.scene.clone(true) as THREE.Group;
+        // Re-center (same logic as original)
+        const box = new THREE.Box3().setFromObject(clonedModel);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        clonedModel.position.sub(center);
+
+        const wrap = new THREE.Group();
+        wrap.add(clonedModel);
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const scl = 5.0 / maxDim;
+        wrap.scale.setScalar(scl);
+        wrap.rotation.set(0, 0, Math.PI / 2);
+        wrap.userData.maxDim = maxDim;
+
+        // Copy current rotation from main guitar
+        if (guitarGroup) {
+          wrap.rotation.y = guitarGroup.rotation.y;
+        }
+
+        miniScene.add(wrap);
+        miniGuitar = wrap;
+      }
+
+      let miniT = t;
+      let alive = true;
+
+      function miniAnimate() {
+        if (!alive) return;
+        requestAnimationFrame(miniAnimate);
+        miniT += 0.01;
+        if (miniGuitar) {
+          miniGuitar.position.y = Math.sin(miniT * 1.0) * 0.008;
+          miniGuitar.rotation.y = miniT * 0.3;
+        }
+        miniRenderer.render(miniScene, miniCam);
+      }
+      miniAnimate();
+
+      return {
+        canvas: miniCanvas,
+        guitar: miniGuitar,
+        destroy: () => {
+          alive = false;
+          miniRenderer.dispose();
+        },
+      };
+    }
+
+    // ── Raycaster ──
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    function hitGuitar(e: PointerEvent): boolean {
+      if (!guitarGroup || dragging) return false;
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      return raycaster.intersectObjects(guitarGroup.children, true).length > 0;
+    }
+
+    canvas.style.touchAction = 'none';
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (dragging) return;
+      canvas.style.cursor = hitGuitar(e) ? 'grab' : '';
+    });
+
+    // ── Drag ──
+    let dragWrapper: HTMLDivElement | null = null;
+    let miniCleanup: (() => void) | null = null;
+    let currentMiniGuitar: THREE.Group | null = null;
+
+    canvas.addEventListener('pointerdown', (e) => {
+      if (!hitGuitar(e) || !guitarGroup) return;
+      e.preventDefault();
+      dragging = true;
+      canvas.style.cursor = 'grabbing';
+
+      // Hide main guitar
+      guitarGroup.visible = false;
+
+      // Create mini canvas
+      const rect = canvas.getBoundingClientRect();
+      const mini = createMiniRenderer(Math.round(rect.width), Math.round(rect.height));
+      miniCleanup = mini.destroy;
+      currentMiniGuitar = mini.guitar;
+
+      // Wrap in div for positioning
+      const wrapper = document.createElement('div');
+      wrapper.className = 'guitar-mini-canvas';
+      wrapper.style.position = 'fixed';
+      wrapper.style.width = `${rect.width}px`;
+      wrapper.style.height = `${rect.height}px`;
+      wrapper.style.left = `${rect.left}px`;
+      wrapper.style.top = `${rect.top}px`;
+      wrapper.appendChild(mini.canvas);
+      document.body.appendChild(wrapper);
+      dragWrapper = wrapper;
+
+      wrapper.dataset.offsetX = String(e.clientX - rect.left);
+      wrapper.dataset.offsetY = String(e.clientY - rect.top);
+    });
+
+    document.addEventListener('pointermove', (e) => {
+      if (!dragging || !dragWrapper) return;
+      const ox = parseFloat(dragWrapper.dataset.offsetX || '0');
+      const oy = parseFloat(dragWrapper.dataset.offsetY || '0');
+      dragWrapper.style.left = `${e.clientX - ox}px`;
+      dragWrapper.style.top = `${e.clientY - oy}px`;
+    });
+
+    document.addEventListener('pointerup', (e) => {
+      if (!dragging || !guitarGroup || !dragWrapper) return;
+      dragging = false;
+      canvas.style.cursor = '';
+
+      // Always drop where released
+      const dropped = dragWrapper;
+      const currentMini = currentMiniGuitar;
+      const ox = parseFloat(dropped.dataset.offsetX || '0');
+      const oy = parseFloat(dropped.dataset.offsetY || '0');
+      const pageX = e.clientX - ox + window.scrollX;
+      const pageY = e.clientY - oy + window.scrollY;
+
+      dropped.style.position = 'absolute';
+      dropped.style.left = `${pageX}px`;
+      dropped.style.top = `${pageY}px`;
+      dropped.classList.add('is-dropped');
+      dragWrapper = null;
+      currentMiniGuitar = null;
+
+      // Store cleanup ref on the element
+      const cleanup = miniCleanup;
+      miniCleanup = null;
+
+      // Re-draggable
+      let rd = false;
+      let rdOx = 0, rdOy = 0;
+
+      dropped.addEventListener('pointerdown', (de) => {
+        de.preventDefault();
+        de.stopPropagation();
+        rd = true;
+        rdOx = de.clientX - dropped.getBoundingClientRect().left;
+        rdOy = de.clientY - dropped.getBoundingClientRect().top;
+        dropped.style.position = 'fixed';
+        dropped.style.left = `${de.clientX - rdOx}px`;
+        dropped.style.top = `${de.clientY - rdOy}px`;
+        dropped.style.zIndex = '10001';
+        dropped.style.cursor = 'grabbing';
+        dropped.style.pointerEvents = 'none';
+
+        const move = (me: PointerEvent) => {
+          if (!rd) return;
+          dropped.style.left = `${me.clientX - rdOx}px`;
+          dropped.style.top = `${me.clientY - rdOy}px`;
+        };
+
+        const up = (ue: PointerEvent) => {
+          if (!rd) return;
+          rd = false;
+          document.removeEventListener('pointermove', move);
+          document.removeEventListener('pointerup', up);
+          dropped.style.pointerEvents = 'auto';
+          dropped.style.cursor = 'grab';
+          dropped.style.position = 'absolute';
+          dropped.style.left = `${ue.clientX - rdOx + window.scrollX}px`;
+          dropped.style.top = `${ue.clientY - rdOy + window.scrollY}px`;
+          dropped.style.zIndex = '100';
+        };
+
+        document.addEventListener('pointermove', move);
+        document.addEventListener('pointerup', up);
+      });
+
+      // Double-click to return
+      dropped.addEventListener('dblclick', () => {
+        if (cleanup) cleanup();
+        dropped.remove();
+        guitarGroup!.visible = true;
+      });
+    });
+
+    // ── Cleanup on navigation/reload ──
+    window.addEventListener('beforeunload', () => {
+      document.querySelectorAll('.guitar-mini-canvas, .shelf-dragged').forEach(el => el.remove());
+      canvas.style.display = 'none';
+    });
+
+    // ── Theme ──
+    window.addEventListener('theme-change', () => {
+      renderer.toneMappingExposure = isDark() ? 1.0 : 1.3;
+    });
+  }
+
+  // Wait until the page is fully loaded and idle before initializing Three.js
+  window.addEventListener('load', () => {
+    // Use requestIdleCallback if available, otherwise setTimeout
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(initShelf);
+    } else {
+      setTimeout(initShelf, 100);
+    }
+  });
+</script>
