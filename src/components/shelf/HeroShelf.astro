@@ -1,21 +1,65 @@
 ---
 ---
 
-<div class="hero-shelf-wrapper relative w-full h-full" id="shelf-wrapper">
-  <canvas id="hero-shelf-canvas" class="w-full h-full" style="display:none;"></canvas>
+<div class="hero-shelf-outer flex flex-col items-center w-full h-full" id="shelf-wrapper">
+  <div class="hero-shelf-wrapper relative w-full flex-1">
+    <canvas id="hero-shelf-canvas" class="w-full h-full" style="display:none;"></canvas>
+  </div>
+
+  <!-- Guitar shelf -->
+  <div class="guitar-shelf"></div>
 </div>
 
 <style>
-  .hero-shelf-wrapper {
+  .hero-shelf-outer {
     min-height: 600px;
-  }
-
-  .hero-shelf-wrapper {
     visibility: hidden;
   }
 
-  .hero-shelf-wrapper.ready {
+  .hero-shelf-outer.ready {
     visibility: visible;
+  }
+
+  /* ── Guitar shelf ── */
+
+  .guitar-shelf {
+    width: 380px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: -20px;
+
+    /* Match keyboard key material */
+    background: var(--t-key-bg);
+    border: 0.1rem solid var(--t-key-shadow);
+    border-radius: 0.7rem;
+
+    /* Same 3D stacked shadow as the keys */
+    box-shadow:
+      0.15rem 0.15rem 0 0 var(--t-key-shadow),
+      0.3rem 0.3rem 0 0 var(--t-key-shadow),
+      0.45rem 0.45rem 0 0 var(--t-key-shadow),
+      0.6rem 0.6rem 0 0 var(--t-key-shadow);
+
+    /* Same 3D angle as the keyboard keys */
+    transform: rotateZ(0turn) rotateY(0.05turn) rotateX(-0.1turn);
+  }
+
+  /* Thin accent edge on top */
+  .guitar-shelf::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 6%;
+    right: 6%;
+    height: 1px;
+    background: var(--t-accent);
+    opacity: 0;
+    border-radius: 1px;
+    transition: opacity 0.3s ease;
+  }
+
+  .guitar-shelf:hover::before {
+    opacity: 0.4;
   }
 
   .guitar-mini-canvas {
@@ -85,7 +129,7 @@
     // Render one clear frame then show canvas
     renderer.render(scene, camera);
     canvas.style.display = '';
-    (canvas.closest('.hero-shelf-wrapper') as HTMLElement)?.classList.add('ready');
+    (canvas.closest('.hero-shelf-outer') as HTMLElement)?.classList.add('ready');
 
     // ── Load guitar ──
     const dracoLoader = new DRACOLoader();
