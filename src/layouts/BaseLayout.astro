@@ -1,5 +1,5 @@
 ---
-// import Navigation from "../components/Navigation.astro";
+import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer/Footer.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import ScrollToTop from "../components/ScrollToTop.astro";
@@ -36,7 +36,7 @@ const {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content="https://amirabaskanov.com/og-image.png" />
 
-    <link rel="preload" href="/models/guitar-draco.glb" as="fetch" crossorigin type="model/gltf-binary" fetchpriority="low" />
+    <!-- <link rel="preload" href="/models/guitar-draco.glb" as="fetch" crossorigin type="model/gltf-binary" fetchpriority="low" /> -->
 
     <script is:inline>
       (function() {
@@ -46,7 +46,7 @@ const {
     </script>
   </head>
   <body class='bg-no-repeat bg-[length:100%_auto] flex min-h-screen flex-col items-center bg-[var(--t-bg-page)] text-[var(--t-text-primary)] transition-colors duration-300' style="background-image: var(--_bg-img);">
-    <!-- <Navigation /> -->
+    <Navigation />
 
     <slot />
 
