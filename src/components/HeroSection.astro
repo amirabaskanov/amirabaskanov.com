@@ -4,9 +4,8 @@ import Keyboard from "@/components/Keyboard.astro";
 import "../styles/global.css";
 ---
 
-<section class="w-full max-w-[1120px] mx-auto flex px-4 h-screen items-center">
-  <!-- Left: content -->
-  <div class="w-full md:w-3/5 flex flex-col gap-8">
+<section class="w-full max-w-[1120px] mx-auto flex px-4 h-screen items-center justify-center">
+  <div class="w-full max-w-2xl flex flex-col gap-8">
     <div
       class="invisible flex w-fit items-center rounded-full gap-3 py-1.5 pl-3 pr-4 border border-[var(--t-border-subtle)] bg-[var(--t-bg-card)]/25 will-change-transform will-change-opacity animate-fade-up"
     >
@@ -35,10 +34,8 @@ import "../styles/global.css";
     <Keyboard class="invisible will-change-transform will-change-opacity animate-fade-up-600" />
   </div>
 
-  <!-- Right: 3D shelf (desktop only) — commented out for now -->
-  <!-- <div class="hidden md:flex w-2/5 h-[500px] items-center justify-center">
-    <HeroShelf />
-  </div> -->
+  <!-- Right: 3D shelf (desktop only) — disabled for now -->
+  <!-- <div class="hidden md:flex w-2/5 h-[500px] items-center justify-center"><HeroShelf /></div> -->
 </section>
 
 <style>
