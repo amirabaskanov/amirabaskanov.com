@@ -1,5 +1,5 @@
 ---
-import Navigation from "../components/Navigation.astro";
+// import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer/Footer.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import ScrollToTop from "../components/ScrollToTop.astro";
@@ -45,8 +45,8 @@ const {
       })();
     </script>
   </head>
-  <body class='bg-no-repeat bg-[length:100%_auto] flex min-h-screen flex-col items-center bg-[var(--t-bg-page)] text-[var(--t-text-primary)] transition-colors duration-300' style="background-image: var(--_bg-img);">
-    <Navigation />
+  <body class='flex min-h-screen flex-col items-center bg-[var(--t-bg-page)] text-[var(--t-text-primary)] transition-colors duration-300'>
+    <!-- <Navigation /> -->
 
     <slot />
 
@@ -75,10 +75,10 @@ const {
 </html>
 
 <style>
-  :root {
-    --_bg-img: url(/assets/images/og_background.png);
+  html {
+    background-color: #050709;
   }
   html[data-theme="light"] {
-    --_bg-img: none;
+    background-color: var(--t-bg-page);
   }
 </style>
