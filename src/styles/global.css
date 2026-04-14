@@ -254,13 +254,13 @@
 /* ─── Theme tokens ─── */
 
 :root {
-  --t-bg-page: #0f1219;
+  --t-bg-page: #09090b;
   --t-bg-card: #141a24;
   --t-bg-card-hover: #131922;
   --t-bg-elevated: #090D13;
   --t-bg-elevated-hover: #1E293B;
   --t-bg-code: #1a2130;
-  --t-bg-gradient-fade: #0f1219;
+  --t-bg-gradient-fade: #09090b;
   --t-border: #2A3441;
   --t-border-hover: #3A4A5A;
   --t-border-subtle: rgba(42, 52, 65, 0.75);
